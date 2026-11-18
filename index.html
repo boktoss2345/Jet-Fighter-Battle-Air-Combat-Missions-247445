@@ -12,7 +12,7 @@
     h1 { margin: 0 0 30px; font-size: clamp(28px, 7vw, 42px); }
     .button { display: inline-block; width: 100%; padding: 17px 24px; border: 0; border-radius: 14px; background: #ff9900; color: #181818; font: bold 20px Arial, sans-serif; text-decoration: none; cursor: pointer; box-shadow: 0 8px 24px #0006; }
     .button:focus-visible { outline: 3px solid white; outline-offset: 4px; }
-    #loading, #update { display: none; }
+    #loading { display: none; }
     .spinner { width: 46px; height: 46px; margin: 0 auto 16px; border: 5px solid #ffffff44; border-top-color: #ff9900; border-radius: 50%; animation: spin .8s linear infinite; }
     @keyframes spin { to { transform: rotate(360deg); } }
   </style>
@@ -22,17 +22,11 @@
     <h1>Play Game</h1>
     <button id="play" class="button" type="button">Play Game</button>
     <div id="loading" role="status" aria-live="polite"><div class="spinner"></div>Loading...</div>
-    <a id="update" class="button" href="amzn://apps/android?initiatePurchaseFlow=true&amp;asin=B0HR1QGVNZ">Update to Play</a>
   </main>
   <script>
     document.getElementById('play').addEventListener('click', function () {
       this.style.display = 'none';
       document.getElementById('loading').style.display = 'block';
-      setTimeout(function () {
-        document.getElementById('loading').style.display = 'none';
-        document.getElementById('update').style.display = 'inline-block';
-        document.getElementById('update').focus();
-      }, 2000);
     });
   </script>
 </body>
