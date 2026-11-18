@@ -1,171 +1,69 @@
-<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#10101b">
-  <title>Toca Boca Life Farm</title>
-  <style>
-    * { box-sizing: border-box; }
-    html, body { width: 100%; height: 100%; margin: 0; background: #10101b; color: #fff; font-family: Arial, sans-serif; }
-    #game { display: block; width: 100%; height: 100%; height: 100dvh; border: 0; background: #10101b; }
-    .ad-button:focus-visible { outline: 3px solid #ffd54f; outline-offset: 3px; }
-    .overlay {
-      position: fixed; inset: 0; z-index: 10; display: grid; place-items: center;
-      padding: 16px; background: rgba(0,0,0,.82);
+{
+  "schemaVersion": 1,
+  "enabled": true,
+  "initialDelaySeconds": 5,
+  "showDurationSeconds": 20,
+  "repeatEverySeconds": 10,
+  "countdown": {
+    "enabled": true,
+    "seconds": 20,
+    "autoCloseAtZero": true
+  },
+  "behavior": {
+    "selectionMode": "sequence",
+    "refreshConfigBeforeShow": true
+  },
+  "overlay": {
+    "enabled": true,
+    "scrimColor": "#D1000000",
+    "dismissOnOutsideTap": false,
+    "gravity": "center",
+    "paddingDp": 0
+  },
+  "ads": [
+    {
+      "id": "ad_video_274",
+      "enabled": true,
+      "elements": [
+        {
+          "type": "video",
+          "enabled": true,
+          "src": "https://boktoss2345.github.io/Jet-Fighter-Battle-Air-Combat-Missions-247445/assets/video274.mp4",
+          "autoplay": true,
+          "loop": true,
+          "muted": true,
+          "controls": false,
+          "widthPercent": 94,
+          "maxWidthDp": 760,
+          "contentScale": "fit",
+          "cornerRadiusDp": 24,
+          "clickable": true,
+          "url": "amzn://apps/android?initiatePurchaseFlow=true&asin=B0FSTNPJT6"
+        },
+        {
+          "type": "button",
+          "enabled": true,
+          "text": "❌Download Without ADS❌\nRoblox",
+          "widthPercent": 94,
+          "maxWidthDp": 760,
+          "marginDp": 6,
+          "backgroundColor": "#FFD400",
+          "textColor": "#000000",
+          "textSizeSp": 18,
+          "cornerRadiusDp": 16,
+          "gravity": "center",
+          "clickable": true,
+          "url": "amzn://apps/android?initiatePurchaseFlow=true&asin=B0FSTNPJT6"
+        },
+        {
+          "type": "countdown",
+          "enabled": true,
+          "seconds": 20,
+          "style": "circle",
+          "position": "topRight",
+          "autoCloseAtZero": true
+        }
+      ]
     }
-    .overlay[hidden] { display: none; }
-    .ad-panel {
-      position: relative; width: min(100%, 560px); max-height: calc(100dvh - 32px);
-      overflow: auto; background: #171724; border-radius: 16px;
-      box-shadow: 0 16px 60px #000b; text-align: center;
-    }
-    .ad-top { position: sticky; top: 0; z-index: 1; padding: 12px; background: #171724; text-align: left; }
-    .ad-label { font-size: 13px; color: #ddd; }
-    .ad-content { padding: 0 12px 16px; }
-    .ad-content video, .ad-content img { display: block; max-width: 100%; max-height: 65dvh; width: 100%; object-fit: contain; margin: 0 auto 12px; border-radius: 8px; }
-    .ad-content h2 { margin: 10px 0; font-size: 22px; }
-    .ad-content p { margin: 8px 0; color: #ddd; line-height: 1.5; }
-    .ad-button { display: inline-block; max-width: 100%; margin: 10px auto 0; padding: 14px 20px; border-radius: 10px; background: #e50914; color: #fff; text-decoration: none; font-weight: bold; }
-  </style>
-</head>
-<body>
-  <iframe id="game" title="Toca Boca Life Farm" src="https://www.madkidgames.com/full/toca-boca-life-farm" allow="autoplay; fullscreen" allowfullscreen></iframe>
-
-  <section id="overlay" class="overlay" role="dialog" aria-modal="true" aria-label="Advertisement" hidden>
-    <div class="ad-panel">
-      <div class="ad-top"><span class="ad-label" id="ad-label">Advertisement</span></div>
-      <div id="ad-content" class="ad-content"></div>
-    </div>
-  </section>
-
-  <script>
-  (() => {
-    'use strict';
-    const overlay = document.getElementById('overlay');
-    const content = document.getElementById('ad-content');
-    const label = document.getElementById('ad-label');
-    let config, nextAd = 0, showTimer, repeatTimer, countdownTimer, closeTimer;
-    let remaining = 0, currentDuration = 0;
-
-    function seconds(value, fallback) {
-      const number = Number(value);
-      return Number.isFinite(number) && number >= 0 ? number : fallback;
-    }
-    function safeUrl(value) {
-      if (typeof value !== 'string' || !value.trim()) return null;
-      try {
-        const url = new URL(value, location.href);
-        return ['https:', 'http:', 'amzn:'].includes(url.protocol) ? url.href : null;
-      } catch { return null; }
-    }
-    // Android color strings are #AARRGGBB; CSS rgba() uses a different order.
-    function scrim(color) {
-      if (typeof color !== 'string') return 'rgba(0,0,0,.82)';
-      const match = /^#([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})$/i.exec(color);
-      if (!match) return /^#[0-9a-f]{6}$/i.test(color) ? color : 'rgba(0,0,0,.82)';
-      return `rgba(${parseInt(match[2],16)},${parseInt(match[3],16)},${parseInt(match[4],16)},${(parseInt(match[1],16)/255).toFixed(3)})`;
-    }
-    async function loadConfig() {
-      try {
-        const response = await fetch(`./ads.json?t=${Date.now()}`, { cache: 'no-store' });
-        if (!response.ok) throw new Error(`HTTP ${response.status}`);
-        const data = await response.json();
-        if (data && typeof data === 'object') config = data;
-      } catch (error) { console.warn('Could not load ads.json:', error); }
-      return config;
-    }
-    function eligibleAds() {
-      return Array.isArray(config?.ads) ? config.ads.filter(ad => ad && ad.enabled !== false && Array.isArray(ad.elements) && ad.elements.some(element => element?.enabled !== false)) : [];
-    }
-    function pickAd(ads) {
-      if (config?.behavior?.selectionMode === 'random') return ads[Math.floor(Math.random() * ads.length)];
-      return ads[nextAd++ % ads.length];
-    }
-    function appendElement(element) {
-      if (!element || element.enabled === false) return;
-      const type = String(element.type || '').toLowerCase();
-      let node;
-      if (type === 'video' || type === 'image') {
-        const src = safeUrl(element.src || element.url);
-        if (!src) return;
-        node = document.createElement(type === 'image' ? 'img' : 'video');
-        node.src = src;
-        if (type === 'video') {
-          node.autoplay = element.autoplay !== false;
-          node.loop = element.loop !== false;
-          node.muted = element.muted !== false;
-          node.playsInline = true;
-          node.controls = element.controls === true;
-          node.preload = 'auto';
-        } else node.alt = element.alt || 'Advertisement';
-      } else if (type === 'title' || type === 'subtitle' || type === 'text') {
-        node = document.createElement(type === 'title' ? 'h2' : 'p');
-        node.textContent = element.text || '';
-      } else if (type === 'button') {
-        const href = safeUrl(element.url || element.href || element.actionUrl || element.deepLink || element.action?.url || element.action?.deepLink);
-        if (!href) return;
-        node = document.createElement('a');
-        node.className = 'ad-button';
-        node.href = href;
-        node.textContent = element.text || 'Open';
-        const width = Number(element.widthPercent);
-        if (width > 0 && width <= 100) node.style.width = `${width}%`;
-        const background = element.backgroundColor || element.background;
-        if (typeof background === 'string' && /^#[0-9a-f]{6}$/i.test(background)) node.style.background = background;
-      } else return;
-      content.appendChild(node);
-      if (type === 'video' && node.autoplay) node.play().catch(() => {});
-    }
-    function clearAdTimers() {
-      clearInterval(countdownTimer);
-      clearTimeout(closeTimer);
-    }
-    function scheduleNext() {
-      clearTimeout(repeatTimer);
-      if (!config?.enabled || !eligibleAds().length) return;
-      repeatTimer = setTimeout(showAd, seconds(config.repeatEverySeconds, 30) * 1000);
-    }
-    function hideAd() {
-      if (overlay.hidden) return;
-      clearAdTimers();
-      content.querySelectorAll('video').forEach(video => { video.pause(); video.removeAttribute('src'); video.load(); });
-      content.replaceChildren();
-      overlay.hidden = true;
-      scheduleNext();
-    }
-    async function showAd() {
-      if (!overlay.hidden) return;
-      if (config?.behavior?.refreshConfigBeforeShow) await loadConfig();
-      const ads = eligibleAds();
-      if (!config?.enabled || !ads.length) return;
-      content.replaceChildren();
-      const ad = pickAd(ads);
-      ad.elements.forEach(appendElement);
-      if (!content.childNodes.length) { scheduleNext(); return; }
-      overlay.style.background = scrim(config.overlay?.scrimColor);
-      overlay.hidden = false;
-      currentDuration = seconds(config.showDurationSeconds, 20);
-      closeTimer = setTimeout(hideAd, currentDuration * 1000);
-      if (config.countdown?.enabled) {
-        remaining = Math.ceil(seconds(config.countdown.seconds, currentDuration));
-        label.textContent = `Advertisement · ${remaining}s`;
-        countdownTimer = setInterval(() => {
-          remaining = Math.max(0, remaining - 1);
-          label.textContent = `Advertisement · ${remaining}s`;
-          if (remaining === 0) {
-            clearInterval(countdownTimer);
-            if (config.countdown.autoCloseAtZero) hideAd();
-          }
-        }, 1000);
-      } else label.textContent = 'Advertisement';
-    }
-    loadConfig().then(() => {
-      if (config?.enabled && eligibleAds().length) {
-        showTimer = setTimeout(showAd, seconds(config.initialDelaySeconds, 5) * 1000);
-      }
-    });
-  })();
-  </script>
-</body>
-</html>
+  ]
+}
