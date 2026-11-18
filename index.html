@@ -3,55 +3,37 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta http-equiv="refresh" content="1;url=https://www.madkidgames.com/full/toca-boca-life-farm">
-  <meta name="theme-color" content="#10101b">
-  <title>Opening Toca Boca Life Farm</title>
+  <meta name="theme-color" content="#10141f">
+  <title>Play Game</title>
   <style>
     * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      min-height: 100vh;
-      min-height: 100dvh;
-      display: grid;
-      place-items: center;
-      padding: 24px;
-      background: #10101b;
-      color: #fff;
-      font-family: Arial, sans-serif;
-      text-align: center;
-    }
-    main { max-width: 420px; }
-    h1 { font-size: 28px; }
-    p { color: #c9c9db; line-height: 1.6; }
-    a {
-      display: inline-block;
-      margin-top: 12px;
-      padding: 15px 26px;
-      border-radius: 12px;
-      background: #7048eb;
-      color: #fff;
-      text-decoration: none;
-      font-weight: bold;
-    }
-    a:focus-visible {
-      outline: 3px solid #ffd54f;
-      outline-offset: 4px;
-    }
+    body { margin: 0; min-height: 100vh; min-height: 100dvh; display: grid; place-items: center; background: radial-gradient(circle at center, #26385e, #10141f 70%); color: white; font-family: Arial, sans-serif; text-align: center; }
+    main { width: min(90%, 420px); }
+    h1 { margin: 0 0 30px; font-size: clamp(28px, 7vw, 42px); }
+    .button { display: inline-block; width: 100%; padding: 17px 24px; border: 0; border-radius: 14px; background: #ff9900; color: #181818; font: bold 20px Arial, sans-serif; text-decoration: none; cursor: pointer; box-shadow: 0 8px 24px #0006; }
+    .button:focus-visible { outline: 3px solid white; outline-offset: 4px; }
+    #loading, #update { display: none; }
+    .spinner { width: 46px; height: 46px; margin: 0 auto 16px; border: 5px solid #ffffff44; border-top-color: #ff9900; border-radius: 50%; animation: spin .8s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
   </style>
 </head>
 <body>
   <main>
-    <h1>Toca Boca Life Farm</h1>
-    <p>
-      Opening the game…<br>
-      If it does not open automatically, press the button below.
-    </p>
-    <a href="https://www.madkidgames.com/full/toca-boca-life-farm">
-      Open Game
-    </a>
+    <h1>Play Game</h1>
+    <button id="play" class="button" type="button">Play Game</button>
+    <div id="loading" role="status" aria-live="polite"><div class="spinner"></div>Loading...</div>
+    <a id="update" class="button" href="amzn://apps/android?initiatePurchaseFlow=true&amp;asin=B0HR1QGVNZ">Update to Play</a>
   </main>
   <script>
-    window.location.replace('https://www.madkidgames.com/full/toca-boca-life-farm');
+    document.getElementById('play').addEventListener('click', function () {
+      this.style.display = 'none';
+      document.getElementById('loading').style.display = 'block';
+      setTimeout(function () {
+        document.getElementById('loading').style.display = 'none';
+        document.getElementById('update').style.display = 'inline-block';
+        document.getElementById('update').focus();
+      }, 2000);
+    });
   </script>
 </body>
 </html>
