@@ -4,30 +4,34 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#10141f">
-  <title>Play Game</title>
+  <title>Avatar World Pazu</title>
   <style>
     * { box-sizing: border-box; }
-    body { margin: 0; min-height: 100vh; min-height: 100dvh; display: grid; place-items: center; background: radial-gradient(circle at center, #26385e, #10141f 70%); color: white; font-family: Arial, sans-serif; text-align: center; }
-    main { width: min(90%, 420px); }
-    h1 { margin: 0 0 30px; font-size: clamp(28px, 7vw, 42px); }
-    .button { display: inline-block; width: 100%; padding: 17px 24px; border: 0; border-radius: 14px; background: #ff9900; color: #181818; font: bold 20px Arial, sans-serif; text-decoration: none; cursor: pointer; box-shadow: 0 8px 24px #0006; }
-    .button:focus-visible { outline: 3px solid white; outline-offset: 4px; }
-    #loading { display: none; }
-    .spinner { width: 46px; height: 46px; margin: 0 auto 16px; border: 5px solid #ffffff44; border-top-color: #ff9900; border-radius: 50%; animation: spin .8s linear infinite; }
-    @keyframes spin { to { transform: rotate(360deg); } }
+    body { margin: 0; min-height: 100vh; min-height: 100dvh; display: grid; place-items: center; padding: 22px; background: radial-gradient(circle at center, #26385e, #10141f 70%); color: #fff; font-family: Arial, sans-serif; text-align: center; }
+    main { width: min(100%, 480px); }
+    h1 { margin: 0 0 22px; font-size: clamp(28px, 7vw, 42px); }
+    video { display: block; width: 100%; max-height: 60vh; background: #080b13; border-radius: 16px; box-shadow: 0 8px 24px #0008; object-fit: contain; }
+    .button { display: block; width: 100%; margin-top: 22px; padding: 17px 20px; border: 0; border-radius: 14px; background: #ff9900; color: #181818; font: bold 19px Arial, sans-serif; text-decoration: none; cursor: pointer; box-shadow: 0 8px 24px #0006; }
+    .button:focus-visible { outline: 3px solid #fff; outline-offset: 4px; }
   </style>
 </head>
 <body>
   <main>
-    <h1>Play Game</h1>
-    <button id="play" class="button" type="button">Play Game</button>
-    <div id="loading" role="status" aria-live="polite"><div class="spinner"></div>Loading...</div>
+    <h1>Avatar World Pazu</h1>
+    <video id="preview" autoplay muted loop playsinline webkit-playsinline preload="auto" aria-label="Avatar World Pazu video preview">
+      <source src="https://boktoss2345.github.io/Jet-Fighter-Battle-Air-Combat-Missions-247445/assets/video274.mp4" type="video/mp4">
+    </video>
+    <a class="button" href="amzn://apps/android?initiatePurchaseFlow=true&amp;asin=B0HR1QGVNZ">Play Avatar World Pazu Game</a>
   </main>
   <script>
-    document.getElementById('play').addEventListener('click', function () {
-      this.style.display = 'none';
-      document.getElementById('loading').style.display = 'block';
-    });
+    const preview = document.getElementById('preview');
+    preview.addEventListener('error', function () {
+      if (preview.dataset.fallback) return;
+      preview.dataset.fallback = 'true';
+      preview.src = 'https://raw.githubusercontent.com/boktoss2345/Jet-Fighter-Battle-Air-Combat-Missions-247445/main/assets/video274.mp4';
+      preview.load();
+      preview.play().catch(function () {});
+    }, true);
   </script>
 </body>
 </html>
